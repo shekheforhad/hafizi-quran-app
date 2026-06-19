@@ -83,3 +83,20 @@ body {
     padding: 10px 15px;
     cursor: pointer;
 }
+
+/* পৃষ্ঠা ওল্টানোর অ্যানিমেশন */
+.page-flip-animation {
+    animation: flipEffect 0.4s ease-in-out;
+}
+
+@keyframes flipEffect {
+    0% {
+        opacity: 0.3;
+        transform: scale(0.98) rotateY(-5deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotateY(0deg);
+    }
+}
+
