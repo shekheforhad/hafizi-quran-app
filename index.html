@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>হাফেজী কুরআন অ্যাপ্লিকেশন</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- সার্চ ও কন্ট্রোল প্যানেল -->
+        <header class="controls">
+            <input type="number" id="searchPage" placeholder="পৃষ্ঠা নম্বর (১-৬১১)">
+            <input type="text" id="searchSurah" placeholder="সূরা বা পারা নম্বর">
+            <button onclick="searchQuran()">খুঁজুন</button>
+            <button onclick="loadLastRead()" id="resumeBtn" class="hidden">পড়া শুরু করুন</button>
+        </header>
+
+        <!-- কুরআন পৃষ্ঠা (১৫ লাইনের হাফেজী ভিউ) -->
+        <main class="quran-page-container">
+            <div id="quranPage" class="quran-page" dir="rtl">
+                <!-- জাভাস্ক্রিপ্ট এর মাধ্যমে এখানে আয়াত লোড হবে -->
+                <p class="loading-text">অ্যাপ্লিকেশন লোড হচ্ছে...</p>
+            </div>
+        </main>
+
+        <!-- পেজিনেশন বাটন -->
+        <footer class="pagination">
+            <button onclick="prevPage()">পূর্ববর্তী পৃষ্ঠা</button>
+            <span id="pageNumber">পৃষ্ঠা: ১</span>
+            <button onclick="nextPage()">পরবর্তী পৃষ্ঠা</button>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

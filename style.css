@@ -1,0 +1,85 @@
+@import url('https://googleapis.com');
+
+body {
+    margin: 0px;
+    padding: 2px;
+    background-color: #34495e;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.app-container {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.controls {
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+    background: #2c3e50;
+}
+
+.controls input, .controls button {
+    width: 130px;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+}
+
+.controls button {
+    background: #1abc9c;
+    color: white;
+    cursor: pointer;
+}
+
+.hidden { display: none; }
+
+/* ১৫ লাইনের হাফেজী পৃষ্ঠা লেআউট */
+.quran-page-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    margin: 0px;
+}
+
+.quran-page {
+    background: White;
+    width: 100%;
+    max-width: 450px;
+    height: 90%;
+    max-height: 1050px; /* ১৫ লাইন সুন্দরভাবে ধরে রাখার জন্য */
+    border: 8px double #2c3e50;
+    border-radius: 8px;
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    font-family: 'Amiri', serif;
+    font-size: 24px;
+    line-height: 2.2; /* ১৫ লাইনের পারফেক্ট গ্যাপ */
+    text-align: justify;
+    text-align-last: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #2c3e50;
+    color: lime;
+}
+
+.pagination button {
+    background: #34495e;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
