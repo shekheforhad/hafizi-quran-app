@@ -1,12 +1,16 @@
-let currentPage = 1;
+// ১. অডিও সাউন্ড ফাইল লোড করা (আপনার প্রজেক্ট ফোল্ডারে page-flip.mp3 ফাইলটি থাকতে হবে)
+const flipSound = new Audio('page-flip.mp3');
 
-// টাচ সোয়াইপ ট্র্যাক করার ভেরিয়েবল
+let currentPage = 1;
 let touchStartX = 0;
 let touchEndX = 0;
 
-// ১ থেকে ১১৪ সূরা এবং ১ থেকে ৩০ পারার ডাটাবেজ সরাসরি কোডের ভেতরে (CORS সমস্যা হবে না)
+// ========================================================
+// 🛑 ২. আপনার সংরক্ষিত কুরআনের সূরা ও পারার ডাটাবেজটি নিচে বসান:
+// ========================================================
 const quranMetaData = {
   "surahs": [
+    // আপনার সূরার ডাটাগুলো এখানে পেস্ট করবেন
 {"name": "الفاتحة", "bangla_name": "ফাতিহা", "page": 2}, 
 {"name": "البقرة", "bangla_name": "বাকারাহ", "page": 3}, 
 {"name": "آل عمران", "bangla_name": "আলে ইমরান", "page": 51}, 
@@ -113,9 +117,11 @@ const quranMetaData = {
 {"name": "المسد", "bangla_name": "লাহাব", "page": 610}, 
 {"name": "الإخلاص", "bangla_name": "ইখলাছ", "page": 610}, 
 {"name": "الفلق", "bangla_name": "ফালাক্ব", "page": 611}, 
-{"name": "الناس", "bangla_name": "নাস", "page": 611} ],
+{"name": "الناس", "bangla_name": "নাস", "page": 611}
+  ],
   "paras": [
-    {"number": 1, "name": "১", "page": 1},
+    // আপনার পারার ডাটাগুলো এখানে পেস্ট করবেন
+{"number": 1, "name": "১", "page": 1},
     {"number": 2, "name": "২", "page": 23},
     {"number": 3, "name": "৩", "page": 43},
     {"number": 4, "name": "৪", "page": 63},
@@ -147,107 +153,146 @@ const quranMetaData = {
     {"number": 30, "name": "৩০", "page": 587}
   ]
 };
+// ========================================================
 
 
-window.onload = async function() {
-    await loadMetaData();
-    
-    // লোকাল স্টোরেজ থেকে শেষ পড়া পৃষ্ঠা চেক করা
+// ৩. অ্যাপ ইনিশিয়ালাইজেশন (সরাসরি অফলাইনে রান হওয়ার জন্য)
+function initApp() {
     const savedPage = localStorage.getItem('lastReadPage');
     if (savedPage) {
         currentPage = parseInt(savedPage);
         showResumeButton(savedPage);
     }
-    
     renderPage(currentPage);
     setupTouchControls(); // টাচ সোয়াইপ সিস্টেম চালু করা
-};
-// ১. সার্চের জন্য মেটাডাটা (JSON) লোড করা
-async function loadMetaData() {
-    try {
-        const response = await fetch('quran_data.json');
-        quranMetaData = await response.json();
-    } catch (error) {
-        console.error("সার্চ ডাটাবেজ ফাইলটি পাওয়া যায়নি, তবে সাধারণ নেভিগেশন কাজ করবে।", error);
-    }}
-// ২. স্ক্রিনে ছবি প্রদর্শন করার মূল ফাংশন
+}
+
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    initApp();
+} else {
+    document.addEventListener("DOMContentLoaded", initApp);
+}
+
+// ৪. স্ক্রিনে ছবি প্রদর্শন করার মূল ফাংশন (সাউন্ড ও অ্যানিমেশন সহ)
 function renderPage(page) {
     if (page < 1 || page > 611) return;
-    currentPage = page; document.getElementById('pageNumber').innerText = `পৃষ্ঠা: ${page}`;
+    currentPage = page; 
+    document.getElementById('pageNumber').innerText = "পৃষ্ঠা: " + page;
     
     // লাস্ট রিড সেভ করা
     localStorage.setItem('lastReadPage', page);
     hideResumeButton();
+    
     const pageDiv = document.getElementById('quranPage');
+    if (!pageDiv) return;
+    
+    // 🔊 পৃষ্ঠা ওল্টানোর সাউন্ড প্লে করা
+    flipSound.currentTime = 0; 
+    flipSound.play().catch(function(error) {
+        console.log("সাউন্ড প্লে হতে ব্রাউজার বাধা দিয়েছে, ইউজার ইন্টারঅ্যাকশন প্রয়োজন।");
+    });
+    
+    // ✨ অ্যানিমেশন ক্লাস যুক্ত করা
+    pageDiv.classList.remove('page-flip-animation');
+    void pageDiv.offsetWidth; // ব্রাউজার রিফ্লো ট্রিগার
+    pageDiv.classList.add('page-flip-animation');
     
     // ছবিতে অলস লোড (Lazy loading) ব্যবহার করা হয়েছে পারফরম্যান্সের জন্য
-    pageDiv.innerHTML = `
-        <img src="images/${page}.jpg" 
-             alt="Page ${page}" 
-             style="width: 100%; height: 100%; object-fit: contain;"
-             onerror="this.onerror=null; this.parentNode.innerHTML='<p style=padding-top:100px;color:gray;>images/ ফোল্ডারে ${page}.jpg ছবিটি পাওয়া যায়নি।</p>';"
-             loading="lazy"> `; }
+    pageDiv.innerHTML = '<img src="images/' + page + '.jpg" alt="Page ' + page + '" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.onerror=null; this.parentNode.innerHTML=\'<p style=padding-top:100px;color:gray;>images/ ফোল্ডারে ' + page + '.jpg ছবিটি পাওয়া যায়নি।</p>\';" loading="lazy">';
+}
 
-// ৩. নেভিগেশন কন্ট্রোল
+// ৫. নেভিগেশন কন্ট্রোল
 function nextPage() { if (currentPage < 611) renderPage(currentPage + 1); }
 function prevPage() { if (currentPage > 1) renderPage(currentPage - 1); }
 
-// ৪. মোবাইল টাচ সোয়াইপ (Swipe) লজিক
+// ৬. মোবাইল টাচ সোয়াইপ (Swipe) লজিক
 function setupTouchControls() {
     const pageContainer = document.getElementById('quranPage');
+    if (!pageContainer) return;
     
-    pageContainer.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+    pageContainer.addEventListener('touchstart', function(e) { 
+        if (e.changedTouches && e.changedTouches.length > 0) {
+            touchStartX = e.changedTouches[0].screenX; 
+        }
+    });
 
-    pageContainer.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX;
-        handleSwipeGesture(); }); }
+    pageContainer.addEventListener('touchend', function(e) { 
+        if (e.changedTouches && e.changedTouches.length > 0) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipeGesture(); 
+        }
+    }); 
+}
 
 function handleSwipeGesture() {
-    const swipeDistance = 100; // সর্বনিম্ন কতটুকু টানলে পৃষ্ঠা পরিবর্তন হবে
+    const swipeDistance = 70; // সর্বনিম্ন কতটুকু টানলে পৃষ্ঠা পরিবর্তন হবে
     
-    // আরবি ডিরেকশন (RTL) অনুযায়ী: বাম থেকে ডানে টানলে পরের পৃষ্ঠা, ডান থেকে বামে টানলে আগের পৃষ্ঠা
+    // আরবি ডিরেকশন (RTL) অনুযায়ী পৃষ্ঠা পরিবর্তন
     if (touchEndX - touchStartX > swipeDistance) {
-        nextPage(); // পরের পৃষ্ঠায় যান
+        nextPage(); 
     } else if (touchStartX - touchEndX > swipeDistance) {
-        prevPage(); // আগের পৃষ্ঠায় যান
-}}
+        prevPage(); 
+    }
+}
 
-// ৫. পৃষ্ঠা, সূরা বা পারা দিয়ে সার্চ করার মাস্টার ফাংশন
+// ৭. পৃষ্ঠা, সূরা বা পারা দিয়ে সার্চ করার অফলাইন মাস্টার ফাংশন
 function searchQuran() {
     const pageInput = document.getElementById('searchPage').value;
     if (pageInput !== "") {
         const pageNum = parseInt(pageInput);
         if (pageNum >= 1 && pageNum <= 611) {
             renderPage(pageNum);
-    document.getElementById('searchPage').value = "";  return; }}
+            document.getElementById('searchPage').value = "";  
+            return; 
+        }
+    }
 
     const textInput = document.getElementById('searchSurah').value.trim();
-    if (textInput !== "" && quranMetaData) {
+    if (textInput !== "") {
         // সূরা সার্চ
-        const foundSurah = quranMetaData.surahs.find(s =>
-s.bangla_name.includes(textInput) || s.name.includes(textInput) );
-        if (foundSurah) {
-            renderPage(foundSurah.page);
-            document.getElementById('searchSurah').value = ""; return; }
+        if (quranMetaData && quranMetaData.surahs) {
+            const foundSurah = quranMetaData.surahs.find(function(s) {
+                return s.bangla_name.includes(textInput) || s.name.includes(textInput); 
+            });
+            if (foundSurah) {
+                renderPage(foundSurah.page);
+                document.getElementById('searchSurah').value = ""; 
+                return; 
+            }
+        }
 
         // পারা সার্চ
-        const foundPara = quranMetaData.paras.find(p => 
-p.number == textInput || p.name.includes(textInput) );
-        if (foundPara) {
-            renderPage(foundPara.page);
-            document.getElementById('searchSurah').value = ""; return; }
-        alert("দুঃখিত! এই নামে কোনো সূরা বা পারা খুঁজে পাওয়া যায়নি।"); }}
+        if (quranMetaData && quranMetaData.paras) {
+            const foundPara = quranMetaData.paras.find(function(p) { 
+                return p.number == textInput || p.name.includes(textInput); 
+            });
+            if (foundPara) {
+                renderPage(foundPara.page);
+                document.getElementById('searchSurah').value = ""; 
+                return; 
+            }
+        }
+        alert("দুঃখিত! এই নামে কোনো সূরা বা পারা খুঁজে পাওয়া যায়নি।"); 
+    }
+}
 
-// ৬. লাস্ট রিড / রেজুম বাটন হ্যান্ডলিং
+// ৮. লাস্ট রিড / রেজুম বাটন হ্যান্ডলিং
 function showResumeButton(savedPage) {
     const resumeBtn = document.getElementById('resumeBtn');
     if (resumeBtn) {
         resumeBtn.classList.remove('hidden');
-        resumeBtn.innerText = "শেষ পড়া পৃষ্ঠা (" + savedPage + ") থেকে শুরু করুন"; }}
+        resumeBtn.innerText = "শেষ পড়া পৃষ্ঠা (" + savedPage + ") থেকে শুরু করুন"; 
+    }
+}
 
+// ৯. রেজুম বাটন হাইড করা
 function hideResumeButton() {
     const resumeBtn = document.getElementById('resumeBtn');
-    if (resumeBtn) resumeBtn.classList.add('hidden'); }
+    if (resumeBtn) resumeBtn.classList.add('hidden'); 
+}
 
+// ১০. শেষ পড়া পৃষ্ঠা লোড করা
 function loadLastRead() {
     const savedPage = localStorage.getItem('lastReadPage');
-    if (savedPage) renderPage(parseInt(savedPage)); }
+    if (savedPage) renderPage(parseInt(savedPage)); 
+}

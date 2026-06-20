@@ -86,7 +86,7 @@ body {
 
 /* পৃষ্ঠা ওল্টানোর অ্যানিমেশন */
 .page-flip-animation {
-    animation: flipEffect 0.4s ease-in-out;
+    animation: flipEffect 1.4s ease-in-out;
 }
 
 @keyframes flipEffect {
