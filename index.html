@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.png">
     <title>হাফেজী কুরআন অ্যাপ্লিকেশন</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="app-container"><center>
         <!-- সার্চ ও কন্ট্রোল প্যানেল -->
         <header class="controls">
+    <!-- নতুন লোগো ট্যাগ -->
+            <img src="favicon.png" alt="Quran Logo" class="app-logo">
             <input type="number" id="searchPage" placeholder="পৃষ্ঠা নম্বর (১-৬১১)">
             <input type="text" id="searchSurah" placeholder="সূরা নাম/পারা নম্বর">
             <button onclick="searchQuran()">খুঁজুন</button>
@@ -31,7 +34,7 @@
             <span id="pageNumber">পৃষ্ঠা: ১</span>
             <button onclick="nextPage()">পরবর্তী পৃষ্ঠা</button>
         </footer>
-    </div>
+   </center> </div>
 
     <script src="app.js"></script>
 </body>
